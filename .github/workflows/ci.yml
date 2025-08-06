@@ -16,7 +16,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./api
+        working-directory: ./api/backend
 
     steps:
     - name: 1. Baixar o código do repositório
