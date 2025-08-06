@@ -1,0 +1,62 @@
+name: CI do MeuTurno
+
+# Execução workflow
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+
+jobs:
+  # validar backend
+  validate-backend:
+    name: "Backend: Build & Test"
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./api
+
+    steps:
+    - name: 1. Baixar o código do repositório
+      uses: actions/checkout@v4
+
+    - name: 2. Configurar o Java (JDK)
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: 3. Buildar e Testar com Maven
+      run: mvn -B clean install
+
+  # validar o Frontend
+  validate-frontend:
+    name: "Frontend: Build & Test"
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./ui
+
+    steps:
+    - name: 1. Baixar o código do repositório
+      uses: actions/checkout@v4
+
+    - name: 2. Configurar o Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: ui/package-lock.json
+
+    - name: 3. Instalar dependências
+      run: npm ci
+
+    - name: 4. Buildar o projeto
+      run: npm run build
+
+    - name: 5. Rodar testes (se houver)
+      run: npm run test -- --no-watch --browsers=ChromeHeadless
