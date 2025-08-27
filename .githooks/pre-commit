@@ -1,0 +1,23 @@
+#!/bin/bash
+
+echo "-------------------------------------------"
+echo "Executando verificação de estilo meu turno (Checkstyle)..."
+echo "-------------------------------------------"
+
+cd api/
+mvn validate
+
+EXIT_CODE=$?
+
+cd ..
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "--------------------------------------------------------"
+    echo "❌ ERRO: Checkstyle encontrou problemas de estilo."
+    echo "   Por favor, corrija os erros listados acima e tente fazer o commit novamente."
+    echo "--------------------------------------------------------"
+    exit 1 # Sai com código 1, o que BLOQUEIA o commit.
+fi
+
+echo "✅ Checkstyle passou com sucesso!"
+exit 0
